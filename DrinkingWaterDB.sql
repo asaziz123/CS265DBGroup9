@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS EPAViolation (
 );
 
 CREATE TABLE IF NOT EXISTS HealthReport (
-	CASEID	INTEGER NOT NULL,
+	CaseID	INTEGER NOT NULL,
 	PWSID	TEXT,
 	Name	TEXT,
 	Address	TEXT,
@@ -96,22 +96,35 @@ CREATE TABLE IF NOT EXISTS HealthReport (
 	Symptoms	TEXT,
 	Hospitalized	TEXT,
 	LabResults	TEXT,
-	PRIMARY KEY(CASEID),
+	PRIMARY KEY(CaseID),
 	FOREIGN KEY(PWSID) REFERENCES DrinkingWaterServiceArea(PWSID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
 -- VIEWS 
 
--- Primary Author: Jack Ding 
+/* 
+ * Primary Author: Jack Ding 
+ */
 CREATE VIEW QualityViolationInQuarter3 AS
 SELECT E.Quality, P.Quality, U.Quality
 FROM EPAViolation E, PointViolation P, UtilityViolation U, Violation V
 WHERE V.Quarter = 3 AND V.ViolationID = E.ViolationID AND V.ViolationID = P.ViolationID AND V.ViolationID = U.ViolationID
 
+/* 
+ * Primary Author: Aron Aziz 
+ * Description: View health reports in which patient was hospitalized
+ */
+CREATE VIEW HospitalizationReports AS 
+SELECT H.CaseID, H.PWSID, H.Name, H.Address, H.OnsetDate, H.EndDate, H.Symptoms, H.LabResults
+FROM HealthReport H
+WHERE H.Hospitalized = "Y"
+
 -- TRIGGERS
 
--- Primary Author of Violation Update Triggers: Jack Ding
+/* 
+ * Primary Author of Violation Update Triggers: Jack Ding
+ */
 CREATE TRIGGER OnUpdateEPAViolation 
 Before INSERT ON EPAViolation
 FOR EACH ROW
@@ -133,8 +146,10 @@ BEGIN
 	INSERT INTO Violation VALUES (NEW.PWSID, NULL, NULL, NEW.Violation ID);
 END;
 
--- Primary Author: Aron Aziz
--- Update Drinking Water Service Area population based upon census population data
+/*
+ * Primary Author: Aron Aziz
+ * Update Drinking Water Service Area population based upon census population data
+ */
 CREATE TRIGGER UpdatePopulation
 After INSERT ON CensusReport
 FOR EACH ROW
@@ -146,21 +161,27 @@ END;
 
 -- QUERIES 
 
--- Primary Author: Jack Ding
--- see the quality of the chemical violations 
+/* 
+ * Primary Author: Jack Ding 
+ * see the quality of the chemical violations 
+ */
 SELECT E.Quality, P.Quality, U.Quality
 FROM EPAViolation E, PointViolation P, UtilityViolation U, Violation V
 WHERE V.Type = “Chemical” AND V.ViolationID = E.ViolationID AND V.ViolationID = P.ViolationID AND V.ViolationID = U.ViolationID
 
--- Primary Author: Jack Ding
--- get the YEAR and PWSIDs for PointViolations where 2 or more violations in a year
+/* 
+ * Primary Author: Jack Ding 
+ * get the YEAR and PWSIDs for PointViolations where 2 or more violations in a year
+ */
 SELECT ViolationID, PWSIDs, YEAR
 FROM Violation JOIN PointViolation USING (PWSID, ViolationID)
 GROUP BY Year
 HAVING COUNT (*) > 1;
 
--- Primary Author: Jack Ding
--- get the number of bacteria violations in year 2005
+/* 
+ * Primary Author: Jack Ding 
+ * get the number of bacteria violations in year 2005
+ */
 SELECT COUNT (Type)
 FROM Violation
 WHERE Type = “bacteria” AND Year = 2005;
