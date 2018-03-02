@@ -2,7 +2,15 @@
 PWSIDs: 
 */
 
-INSERT INTO LocationPolygon();
+INSERT INTO LocationPolygon('TN1230000', 5, 10);
+INSERT INTO LocationPolygon('TN1230000', 10, 10);
+INSERT INTO LocationPolygon('TN1230000', 5, 5);
+INSERT INTO LocationPolygon('TN1230001', 5, 0);
+INSERT INTO LocationPolygon('TN1230001', 0, 0);
+INSERT INTO LocationPolygon('TN1230001', 0, 5);
+INSERT INTO LocationPolygon('TN1230002', 10, 15);
+INSERT INTO LocationPolygon('TN1230002', 10, 10);
+INSERT INTO LocationPolygon('TN1230002', 15, 15);
 
 DrinkingWaterServiceArea
 /*
