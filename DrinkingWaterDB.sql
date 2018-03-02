@@ -117,8 +117,59 @@ CREATE TABLE IF NOT EXISTS HealthReport (
 );
 
 
+-- VIEWS 
+
+-- Primary Author: Jack Ding 
+CREATE VIEW QualityViolationInQuarter3 AS
+SELECT E.Quality, P.Quality, U.Quality
+FROM EPAViolation E, PointViolation P, UtilityViolation U, Violation V
+WHERE V.Quarter = 3 AND V.ViolationID = E.ViolationID AND V.ViolationID = P.ViolationID AND V.ViolationID = U.ViolationID
+
+-- TRIGGERS
+
+-- Primary Author of Violation Update Triggers: Jack Ding
+CREATE TRIGGER OnUpdateEPAViolation 
+Before INSERT ON EPAViolation
+FOR EACH ROW
+BEGIN
+	INSERT INTO Violation VALUES (NEW.PWSID, NULL, NULL, NEW.Violation ID);
+END;
+
+CREATE TRIGGER OnUpdateUtilityViolation 
+Before INSERT ON UtilityViolation
+FOR EACH ROW
+BEGIN
+	INSERT INTO Violation VALUES (NEW.PWSID, NULL, NULL, NEW.Violation ID);
+END;
+
+CREATE TRIGGER OnUpdatePointViolation 
+Before INSERT ON PointViolation
+FOR EACH ROW
+BEGIN
+	INSERT INTO Violation VALUES (NEW.PWSID, NULL, NULL, NEW.Violation ID);
+END;
 
 
+-- QUERIES 
+
+-- Primary Author: Jack Ding
+-- see the quality of the chemical violations 
+SELECT E.Quality, P.Quality, U.Quality
+FROM EPAViolation E, PointViolation P, UtilityViolation U, Violation V
+WHERE V.Type = “Chemical” AND V.ViolationID = E.ViolationID AND V.ViolationID = P.ViolationID AND V.ViolationID = U.ViolationID
+
+-- Primary Author: Jack Ding
+-- get the YEAR and PWSIDs for PointViolations where 2 or more violations in a year
+SELECT ViolationID, PWSIDs, YEAR
+FROM Violation JOIN PointViolation USING (PWSID, ViolationID)
+GROUP BY Year
+HAVING COUNT (*) > 1;
+
+-- Primary Author: Jack Ding
+-- get the number of bacteria violations in year 2005
+SELECT COUNT (Type)
+FROM Violation
+WHERE Type = “bacteria” AND Year = 2005;
 
 
 
