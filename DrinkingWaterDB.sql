@@ -118,7 +118,7 @@ WHERE V.Quarter = 3 AND V.ViolationID = E.ViolationID AND V.ViolationID = P.Viol
 CREATE VIEW HospitalizationReports AS 
 SELECT H.CaseID, H.PWSID, H.Name, H.Address, H.OnsetDate, H.EndDate, H.Symptoms, H.LabResults
 FROM HealthReport H
-WHERE H.Hospitalized = "Y"
+WHERE H.Hospitalized = 'Yes'
 
 /*
 Primary Author: Ulysses Yu
@@ -205,12 +205,12 @@ INSERT INTO HealthReport VALUES (13,'CA1240002','Salmonella','353 Malibu Drive',
 /*
 Author: Ulysses Yu
 */
-INSERT INTO CensusReport VALUES (TN1230000, Davidson, TN, 2010, M, 3, 15, 20.0, 7181, 21924, 32.8, 123);
-INSERT INTO CensusReport VALUES (TN1230001, Davidson, TN, 2010, I, 6, 10, 60.0, 5237, 8485, 61.7, 234)
-INSERT INTO CensusReport VALUES (TN1230000, Davidson, TN, 2000, I, 1, 17, 5.9, 1213, 28438, 4.3, 345);
-INSERT INTO CensusReport VALUES (CA1231111, LosAngleles,CA, 2010, MIE, 11, 22, 50.0, 14166, 37819, 37.5, 456);
-INSERT INTO CensusReport VALUES (TN1230002, Rutherford, TN, 2010, M, 2, 20, 10.0, 2957, 33201, 8.9, 567);
-INSERT INTO CensusReport VALUES (TN1230002,	Rutherford, TN, 2010, M, 1, 1, 100.0, 311, 311, 100.0, 678);
+INSERT INTO CensusReport VALUES ('TN1230000', 'Davidson', 'TN', 2010, M, 3, 15, 20.0, 7181, 21924, 32.8, 123);
+INSERT INTO CensusReport VALUES ('TN1230001', 'Davidson', 'TN', 2010, I, 6, 10, 60.0, 5237, 8485, 61.7, 234)
+INSERT INTO CensusReport VALUES ('TN1230000', 'Davidson', 'TN', 2000, I, 1, 17, 5.9, 1213, 28438, 4.3, 345);
+INSERT INTO CensusReport VALUES ('CA1231111', 'Los Angeles', 'CA', 2010, MIE, 11, 22, 50.0, 14166, 37819, 37.5, 456);
+INSERT INTO CensusReport VALUES ('TN1230002', 'Rutherford', 'TN', 2010, M, 2, 20, 10.0, 2957, 33201, 8.9, 567);
+INSERT INTO CensusReport VALUES ('TN1230002', 'Rutherford', 'TN', 2010, M, 1, 1, 100.0, 311, 311, 100.0, 678);
 
 
 -- QUERIES 
@@ -239,6 +239,32 @@ HAVING COUNT (*) > 1;
 SELECT COUNT (Type)
 FROM Violation
 WHERE Type = “bacteria” AND Year = 2005;
+
+/* 
+ * Primary Author: Aron Aziz
+ * get census reports from 2010 for TN
+ */
+ SELECT * 
+ FROM CensusReport
+ WHERE Year = 2010 AND State = 'TN';
+
+/* 
+ * Primary Author: Aron Aziz
+ * get health reports where lab results were negative, 
+ * grouped by hospitalization
+ */
+ SELECT COUNT(LabResults) 
+ FROM HealthReport
+ WHERE LabResults <> 'None'
+ GROUP BY Hospitalized;
+
+/* 
+ * Primary Author: Aron Aziz
+ * get years of census reports performed for state of TN
+ */
+ SELECT Year
+ FROM CensusReport
+ WHERE State = 'TN'
 
 /*
 Primary Author: Ulysses Yu
